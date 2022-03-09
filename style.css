@@ -1,0 +1,102 @@
+body{
+  margin:0;
+}
+#rules {
+  visibility:hidden;
+  background-color: #B4B4E8;
+  border: solid 3px #CFE0F1;
+  border-radius:12px;
+  width:40vw;
+  height:0vw;
+  margin:10px;
+  text-align:center;
+  padding:10px 0 10px 0;
+  font-family:'Comfortaa', cursive;
+  font-size:2vw;
+  color:white;
+  position:absolute;
+  transition-duration: 1s;
+  transition-timing-function: linear;
+  overflow: hidden;
+  
+}
+#wrapper {
+  width:100%;
+  height:100vh;
+  background-image:url('img/back3.jpg');
+  background-size:cover;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+#menu {
+  background-color: #B4B4E8;
+  border: solid 3px #CFE0F1;
+  border-radius:12px;
+  width:40vw;
+  margin:10px;
+  text-align:center;
+  padding:10px 0 10px 0;
+  font-family:'Comfortaa', cursive;
+  font-size:2vw;
+  color:white;
+}
+
+#menu:hover {
+  background-color:white;
+  color:#B4B4E8;
+  tranform: scale(1.2);
+}
+
+#menu:focus {
+  color:white;
+  background-color:#8383E1;
+}
+
+img {
+  position:absolute;
+}
+ #doc {
+   width:20vw;
+   left: 60vw;
+   top:0;
+ }
+#virus1{
+  width:15vw;
+  left:20vw;
+  top:50vh;
+}
+#virus2{
+  width:15vw;
+  left:15vw;
+  top:65vh;
+}
+
+#cell1{
+  width:12vw;
+  left:23vw;
+  top:17vh;
+}
+#cell2{
+  width:12vw;
+  left:65vw;
+  top:55vh;
+}
+
+#button {
+  background-color: white;
+  border: solid 3px #CFE0F1;
+  border-radius:12px;
+  color:#B4B4E8;
+  font-size:1em;
+}
+#button:hover {
+  color:#8383E1;
+}
+
+
+
+

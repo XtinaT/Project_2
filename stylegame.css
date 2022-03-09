@@ -1,0 +1,107 @@
+body{
+  margin:0;
+  width:100%;
+  height:100vh;
+  position: relative;
+}
+
+#background {
+  width:100vw;
+  height:100vh;
+}
+#header {
+  position:absolute;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index:5;
+  top:0;
+}
+#header:hover {
+  cursor:pointer;
+
+}
+
+@keyframes bounce {
+	0%, 20%, 60%, 100% {
+		transform: translateY(0);
+		transform: translateY(0);
+	}
+
+	40% {
+		transform: translateY(-20px);
+		transform: translateY(-20px);
+	}
+
+	80% {
+		transform: translateY(-10px);
+		transform: translateY(-10px);
+	}
+}
+
+svg:hover {
+  animation: bounce 1s;
+}
+
+#canvas {
+  position:absolute;
+  cursor:none;
+}
+#play-again {
+  background-color: white;
+  border: solid 3px #CFE0F1;
+  border-radius:12px;
+  color:#7252E4;
+  font-size:1em;
+}
+#play-again:hover {
+  color:#3D16C9;
+}
+
+#game-over {
+  font-size:2em;
+  text-align: center;
+  color:#7252E4;
+  position:absolute;
+}
+
+#score {
+  text-align: center;
+  color:#7252E4;
+  position:absolute;
+  left:80vw;
+}
+
+#overlay {
+  position:absolute;
+  width:100%;
+  height:100vh;
+  display:none;
+  background-color: rgba(255, 255, 255, 0.4);
+}
+#score {
+  position:absolute;
+  left:90%;
+  top:25%;
+  font-size:3em;
+  color:#cebbff;
+}
+
+#life {
+  position:absolute;
+  left:70%;
+  top:25%;
+}
+
+#react1, #react2 {
+  position:absolute;
+  left:80%;
+  top:0px;
+  opacity:0;
+}
+@keyframes showReact
+    {
+        0% { opacity: 0; }
+        50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
