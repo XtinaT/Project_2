@@ -12,6 +12,7 @@ var RAF =
 var body = document.getElementsByTagName("body");
 var W = window.innerWidth;
 var H = window.innerHeight;
+var standartSize = W/20; 
 var gameOverDiv = document.getElementById("game-over");
 var overlay = document.getElementById("overlay");
 var lifes = document.getElementById('life');
@@ -38,39 +39,39 @@ body[0].appendChild(canvas);
 
 var pause = document.getElementById('pause');
 var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-circle.setAttribute("cx", 50);
-circle.setAttribute("cy", 50);
-circle.setAttribute("r", 40);
+circle.setAttribute("cx", standartSize/2);
+circle.setAttribute("cy", standartSize/1.7);
+circle.setAttribute("r", standartSize/2.1);
 circle.setAttribute("fill", "white");
 circle.setAttribute("stroke", "orange");
-circle.setAttribute("stroke-width", 5);
+circle.setAttribute("stroke-width", standartSize/20);
 pause.appendChild(circle);
 
 var stroke1 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-stroke1.setAttribute("x", 35);
-stroke1.setAttribute("y", 30);
-stroke1.setAttribute("width", 10);
-stroke1.setAttribute("height", 40);
-stroke1.setAttribute('stroke-width', 5);
+stroke1.setAttribute("x", standartSize/2.9);
+stroke1.setAttribute("y", standartSize/2.7);
+stroke1.setAttribute("width", standartSize/10);
+stroke1.setAttribute("height", standartSize/2.3);
+stroke1.setAttribute('stroke-width', standartSize/20);
 stroke1.setAttribute('stroke', 'orange');
 stroke1.setAttribute('stroke-linejoin', 'round');
 stroke1.setAttribute("fill", "orange");
 pause.appendChild(stroke1);
 
 var stroke2 = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-stroke2.setAttribute("x", 55);
-stroke2.setAttribute("y", 30);
-stroke2.setAttribute("width", 10);
-stroke2.setAttribute("height", 40);
-stroke2.setAttribute('stroke-width', 5);
+stroke2.setAttribute("x", standartSize/1.8);
+stroke2.setAttribute("y", standartSize/2.7);
+stroke2.setAttribute("width", standartSize/10);
+stroke2.setAttribute("height", standartSize/2.3);
+stroke2.setAttribute('stroke-width', standartSize/20);
 stroke2.setAttribute('stroke', 'orange');
 stroke2.setAttribute('stroke-linejoin', 'round');
 stroke2.setAttribute("fill", "orange");
 pause.appendChild(stroke2);
 
 var triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-triangle.setAttribute('points', '35,30 75,50 35,70');
-triangle.setAttribute('stroke-width', 5);
+triangle.setAttribute('points', `${standartSize/2.8}, ${standartSize/2.9} ${standartSize/1.3}, ${standartSize/1.7} ${standartSize/2.8}, ${standartSize/1.2}`);
+triangle.setAttribute('stroke-width', standartSize/20);
 triangle.setAttribute('stroke', 'orange');
 triangle.setAttribute('stroke-linejoin', 'round');
 triangle.setAttribute("fill", 'orange');
@@ -120,13 +121,13 @@ var player = document.createElement("img");
 player.id = "player";
 player.setAttribute("src", "img/happy4.png");
 player.style.position = "absolute";
-player.style.width = 100 + "px";
-player.style.height = 100 + "px";
+player.style.width = standartSize + "px";
+player.style.height = standartSize + "px";
 body[0].appendChild(player);
 player = {
   posX: W/2,
   posY: H/2,
-  size: 100,
+  size: standartSize,
   speedX: 0,
   speedY: 0,
   life: 4,
@@ -282,6 +283,8 @@ function update(dt) {
 
 addEventListener("keydown", movePlayer, false);
 addEventListener("keyup", stopPlayer, false);
+addEventListener("mousemove", movePlayerMouse, false);
+addEventListener("click", mouseFire, false);
 
 function movePlayer(e) {
   e = e || window.event;
@@ -302,6 +305,18 @@ function stopPlayer(e) {
   if (e.keyCode == 38 || e.keyCode == 40||e.keyCode == 87||e.keyCode == 83) player.speedY = 0;
 }
 
+function mouseFire (e) {
+  e = e || window.event;
+  e.preventDefault();
+  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+}
+
+function movePlayerMouse(e) {
+  e = e || window.event;
+  e.preventDefault();
+  player.posX = Math.round(e.pageX - player.size/2);
+  player.posY = Math.round(e.pageY - player.size/2);
+}
 
 function Fire() {
   let self = this;
@@ -343,10 +358,10 @@ function Enemy () {
   
   self.addEnemy = function () {
     var enemy = {
-    posX : W+10, 
-    posY:randomDiap(0,H-80),
+    posX : W+standartSize/10, 
+    posY:randomDiap(0,H-standartSize*0.8),
     speed:randomDiap(1, 4),
-    size:80,
+    size:standartSize*0.8,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 4),
@@ -403,10 +418,10 @@ function HealItem () {
   
   self.addHealItem = function () {
     var item = {
-    posX : W+10, 
-    posY:randomDiap(0,H-80),
+    posX : W+standartSize/10, 
+    posY:randomDiap(0,H-standartSize*0.8),
     speed:randomDiap(3, 4),
-    size:80,
+    size:standartSize*0.8,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 4),
@@ -464,10 +479,10 @@ function Cell () {
   
   self.addCell = function () {
     var item = {
-    posX : W+10, 
-    posY:randomDiap(0,H-80),
+    posX : W+standartSize/10, 
+    posY:randomDiap(0,H-standartSize*0.6),
     speed:randomDiap(3, 4),
-    size:60,
+    size:standartSize*0.6,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 3),
@@ -592,7 +607,7 @@ function checkCollisionsHealItems() {
             if (lifesChildren.length<4) {
             var image = document.createElement('img');
             image.setAttribute('src', 'img/life2.png');
-            image.setAttribute('width', 50);
+            image.setAttribute('width', standartSize/2);
             lifes.appendChild(image);
             }
         }
@@ -640,7 +655,7 @@ function drawLifes () {
   for (var i=0;i<player.life;i++) {
     var image = document.createElement('img');
     image.setAttribute('src', 'img/life2.png');
-    image.setAttribute('width', 50);
+    image.setAttribute('width', standartSize/2);
     lifes.appendChild(image);
   }
 }
@@ -655,7 +670,7 @@ function Explosion () {
     animX:0,
     animY:0,
     speed:0,
-    size:80,
+    size:standartSize*0.8,
     accel:0.2,
   }
   explosions.push(explosion);
