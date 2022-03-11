@@ -6,25 +6,37 @@
     <meta name="viewport" content="width=device-width, height=device-height, target-densitydpi=device-dpi, initial-scale=1">
     <meta name="viewport" content="width=device-width">
     <title>MENU</title>
+    <link href="preloader.css" rel="stylesheet" type="text/css" />
     <link href="style.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Marmelad&display=swap" rel="stylesheet">
   </head>
   <body>
+     <div class="preloader">
+    <svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path fill="currentColor"
+        d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z">
+      </path>
+    </svg>
+  </div> 
     <div id='wrapper'>
+        <p class='logo'>BEAT IT!</p>
         <img src='img/doctors.png' alt='doctors' id = 'doc'>
         <a href='./game.html'>
-        <input type='button' id="menu" value='Новая игра'/></a>
-        <input type='button' id="menu" value='Правила' onclick="anim2()"/>
-        <input type='button' id="menu" value='Результаты'/>
+        <input type='button' id="menu" value='New Game'/></a>
+        <input type='button' id="menu" value='Rules' onclick="anim2()"/>
+        <input type='button' id="menu" value='Results'/>
       <img src='img/viruspurple.png' alt='coronavirus' id = 'virus2'>
       <img src='img/viruslightblue.png' alt='coronavirus' id = 'virus1'>
       <img src='img/happy2.png' alt='whitebloodcell' id = 'cell1'>
       <img src='img/happy.png' alt='whitebloodcell' id = 'cell2'>
-      <div id='rules'>
+      <div id='rules' style = 'visibility:hidden'>
         <p>Пора уже навалять этому коронавирусу! И эта задача ляжет на плечи одного маленького, но очень шустрого лимфоцита, которому ты будешь помогать! Отстреливай зловредные вирусы, но будь осторожен, они очень опасны при столкновении! Также, будь внимателен и не повреди окружающие тебя клетки крови! И, конечно же, не забывай подкрепляться!</p>
         <button id="button" onclick='anim1()'>OK</button>
       </div>
+      <div class='cover'><p>Please, rotate your device!</p></div>
     </div>
+    <script src="preloader.js"></script>
     <script src="scriptMainPage.js"></script>
   </body>
 </html>

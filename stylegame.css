@@ -4,8 +4,14 @@ body{
   height:100vh;
   position: relative;
 }
+@font-face {
+  font-family:"Disko";
+  src:url("font/Disko.eot?") format("eot"),url("font/Disko.woff") format("woff"),url("font/Disko.ttf") format("truetype"),url("font/Disko.svg#Disko") format("svg");
+  font-weight:normal;
+  font-style:normal;
+}
 
-#background {
+#wrapper {
   width:100vw;
   height:100vh;
 }
@@ -50,25 +56,34 @@ svg:hover {
   background-color: white;
   border: solid 3px #CFE0F1;
   border-radius:12px;
+  font-family: 'Disko';
   color:#7252E4;
   font-size:1em;
 }
 #play-again:hover {
-  color:#3D16C9;
+  background-color:#7252E4;
+  color:white;
+  transform:scale(1.1);
 }
 
 #game-over {
   font-size:2em;
   text-align: center;
+  font-family: 'Disko';
   color:#7252E4;
   position:absolute;
 }
 
 #score {
   text-align: center;
-  color:#7252E4;
   position:absolute;
   left:80vw;
+  position:absolute;
+  left:90%;
+  top:25%;
+  font-size:3em;
+  font-family: 'Disko';
+  color:#cebbff;
 }
 
 #overlay {
@@ -77,13 +92,6 @@ svg:hover {
   height:100vh;
   display:none;
   background-color: rgba(255, 255, 255, 0.4);
-}
-#score {
-  position:absolute;
-  left:90%;
-  top:25%;
-  font-size:3em;
-  color:#cebbff;
 }
 
 #life {
@@ -108,3 +116,4 @@ svg:hover {
 #player {
   cursor:none;
 }
+

@@ -10,14 +10,18 @@ var RAF =
     window.setTimeout(callback, 1000 / 60);
   };
 var body = document.getElementsByTagName("body");
+var wrapper = document.getElementById('wrapper');
 var W = window.innerWidth;
 var H = window.innerHeight;
-var standartSize = W/20; 
+var standartSize = W/17; 
 var gameOverDiv = document.getElementById("game-over");
 var overlay = document.getElementById("overlay");
 var lifes = document.getElementById('life');
 var lifesChildren;
 var i;
+var svg = document.getElementById('pause');
+svg.setAttribute('width',W/15);
+svg.setAttribute('height',W/15);
 
 window.addEventListener("resize", resize, false);
 function resize(e) {
@@ -35,7 +39,7 @@ canvas.id = "canvas";
 var ctx = canvas.getContext("2d");
 canvas.width = W;
 canvas.height = H;
-body[0].appendChild(canvas);
+wrapper.appendChild(canvas);
 
 var pause = document.getElementById('pause');
 var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -78,6 +82,7 @@ triangle.setAttribute("fill", 'orange');
 
 pause.addEventListener('click',click,false);
 var isclicked = false;
+
 function click (e) {
   e=e||window.event;
   e.preventDefault;
@@ -85,11 +90,23 @@ function click (e) {
     pause.removeChild(stroke1);
     pause.removeChild(stroke2);
     pause.appendChild(triangle);
+    RAF=null;
     isclicked = true;
+    canvas.style.cursor = "default";
   } else {
     pause.appendChild(stroke1);
     pause.appendChild(stroke2);
     pause.removeChild(triangle);
+    RAF = window.requestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.oRequestAnimationFrame ||
+  window.msRequestAnimationFrame ||
+  function (callback) {
+    window.setTimeout(callback, 1000 / 60);
+  };
+    mainLoop();
+    canvas.style.cursor = "none";
     isclicked = false;
   }
   
@@ -108,7 +125,7 @@ function PreloadImage(img) {
   PreloadedImagesH[img] = true;
 }
 
-PreloadImage("img/back4.jpg");
+PreloadImage("img/back5.webp");
 PreloadImage("img/happy5.png");
 PreloadImage("img/shoot.png");
 PreloadImage("img/sprite.png");
@@ -123,9 +140,9 @@ player.setAttribute("src", "img/happy4.png");
 player.style.position = "absolute";
 player.style.width = standartSize + "px";
 player.style.height = standartSize + "px";
-body[0].appendChild(player);
+wrapper.appendChild(player);
 player = {
-  posX: W/2,
+  posX: 0,
   posY: H/2,
   size: standartSize,
   speedX: 0,
@@ -153,13 +170,17 @@ player = {
 window.onload = function (e) {
   e = e || window.event;
   e.preventDefault();
+  document.body.classList.add('loaded_hiding');
+  window.setTimeout(function () {
+  document.body.classList.add('loaded');
+  document.body.classList.remove('loaded_hiding');
+  }, 500);
   init();
 };
 function init() {
   player.update();
-  
-  body[0].style.backgroundImage = "url('img/back4.jpg')";
-  body[0].style.backgroundSize = "cover";
+  wrapper.style.backgroundImage = "url('img/back5.webp')";
+  wrapper.style.backgroundSize = "cover";
   document.getElementById("play-again").addEventListener("click", function () {
     reset();
   });
@@ -286,6 +307,20 @@ addEventListener("keyup", stopPlayer, false);
 addEventListener("mousemove", movePlayerMouse, false);
 addEventListener("click", mouseFire, false);
 
+var play = document.getElementById('player');
+play.addEventListener("touchstart", playerTouchStart, {passive:false});
+play.addEventListener('touchmove',movePlayerTouch,{passive:false});
+play.addEventListener("touchend", playerTouchEnd, {passive:false});
+ 
+$('document').bind('tap',function () {
+  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+    })
+
+
+
+var touchShiftX=0;
+var touchShiftY=0;
+
 function movePlayer(e) {
   e = e || window.event;
   e.preventDefault();
@@ -317,6 +352,32 @@ function movePlayerMouse(e) {
   player.posX = Math.round(e.pageX - player.size/2);
   player.posY = Math.round(e.pageY - player.size/2);
 }
+
+function playerTouchStart(e) {
+  var self = this;
+  e = e || window.event;
+  e.preventDefault();
+  self.style.cursor = 'none';
+  var touchInfo = e.targetTouches[0];
+  touchShiftX = touchInfo.pageX-player.posX;
+  touchShiftY = touchInfo.pageY-player.posY;
+  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+}
+
+function playerTouchEnd(e) {
+  var self = this;
+  e = e || window.event;
+  e.preventDefault(); //document.removeEventListener('touchmove',movePlayerTouch,false);
+}
+
+function movePlayerTouch(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var touchInfo = e.targetTouches[0];
+    player.posX = touchInfo.pageX - touchShiftX;
+    player.posY = touchInfo.pageY - touchShiftY;
+  }
+
 
 function Fire() {
   let self = this;
@@ -606,7 +667,7 @@ function checkCollisionsHealItems() {
             img2.style.animation = 'showReact 1.5s 1 linear';
             if (lifesChildren.length<4) {
             var image = document.createElement('img');
-            image.setAttribute('src', 'img/life2.png');
+            image.setAttribute('src', 'img/h4.png');
             image.setAttribute('width', standartSize/2);
             lifes.appendChild(image);
             }
@@ -632,6 +693,26 @@ function gameOver() {
     gameOverDiv.style.display = 'block';
     gameOverDiv.style.left = (W  - gameOverDiv.offsetWidth) / 2 + "px";
     gameOverDiv.style.top = (H  - gameOverDiv.offsetHeight) / 2 + "px";
+
+    var coords = [
+      [gameOverDiv.offsetLeft - standartSize*0.8, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth - standartSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartSize*0.4],
+      [gameOverDiv.offsetLeft - standartSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartSize*0.4],
+    ];
+    var images = ['/img/deadvirus1.png','/img/deadvirus2.png', '/img/deadvirus3.png', '/img/deadvirus4.png'];
+
+    for (var i=0;i<4;i++) {
+      var img = document.createElement('img');
+      img.setAttribute('src',images[i]);
+      img.style.width = standartSize*0.8 +'px';
+      img.style.position = 'absolute';
+      img.style.left = coords[i][0]+'px' ;
+      img.style.top = coords[i][1]+'px' ;
+      overlay.appendChild(img);
+    }
+    
+  
     isGameOver = true;
     fire = [];
     enemies = [];
@@ -644,7 +725,7 @@ function reset() {
     isGameOver = false;
     gameTime = 0;
     score = 0;
-  player.posX = (W-player.size)/2;
+  player.posX = 0;
   player.posY= (H-player.size)/2;
   player.life = 4;
     player.update();
@@ -654,7 +735,7 @@ function reset() {
 function drawLifes () {
   for (var i=0;i<player.life;i++) {
     var image = document.createElement('img');
-    image.setAttribute('src', 'img/life2.png');
+    image.setAttribute('src', 'img/h4.png');
     image.setAttribute('width', standartSize/2);
     lifes.appendChild(image);
   }
@@ -685,8 +766,6 @@ function Explosion () {
   }
   }
   self.explosionPaint = function () {
-      console.log('here');
-
     for (let i = 0; i < explosions.length; i++) {
          
 ctx.drawImage(explosionI, 200 * Math.floor(explosions[i].animX), 200 * Math.floor(explosions[i].animY), 200, 200, explosions[i].posX,explosions[i].posY, explosions[i].size, explosions[i].size);
