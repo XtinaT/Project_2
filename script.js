@@ -27,8 +27,8 @@ window.addEventListener("resize", resize, false);
 function resize(e) {
   e = e || window.event;
   e.preventDefault;
-  H = window.innerHeight;
-  W = window.innerWidth;
+  H = document.body.offsetHeight;
+  W = document.body.offsetWidth;
   canvas.width = W;
   canvas.height = H;
   player.update();
@@ -92,6 +92,7 @@ function click (e) {
     pause.appendChild(triangle);
     RAF=null;
     isclicked = true;
+    playSound(clickSound);
     canvas.style.cursor = "default";
   } else {
     pause.appendChild(stroke1);
@@ -106,6 +107,7 @@ function click (e) {
     window.setTimeout(callback, 1000 / 60);
   };
     mainLoop();
+    playSound(clickSound);
     canvas.style.cursor = "none";
     isclicked = false;
   }
@@ -127,8 +129,6 @@ function PreloadImage(img) {
 
 PreloadImage("img/back5.webp");
 PreloadImage("img/happy5.png");
-PreloadImage("img/shoot.png");
-PreloadImage("img/sprite.png");
 PreloadImage("img/virusgreen.png");
 PreloadImage("img/viruslightblue.png");
 PreloadImage("img/viruspurple.png");
@@ -158,6 +158,7 @@ player = {
     this.posX += this.speedX;
     this.posY += this.speedY;
     if (player.posX <= 0) player.posX = 0;
+    if (player.posY <= W/15&&player.posX <= W/15) player.posY = W/15;
     if (player.posX + player.size > W) {
       player.posX = W - player.size;
     }
@@ -241,7 +242,40 @@ shoot.src = "img/shoot1.png";
 var explosionI = new Image();
 explosionI.src = "img/bangspr.png";
 
-let newFire = new Fire();
+var newFire = new Fire();
+
+var clickSound = new Audio;
+clickSound.src = "sounds/click1.mp3";
+
+var bangSound = new Audio;
+bangSound.src="sounds/bang5.mp3";
+
+var collisionSound = new Audio;
+collisionSound.src="sounds/collision1.mp3";
+
+var cellSound = new Audio;
+cellSound.src="sounds/cell1.mp3";
+
+var lifeSound = new Audio;
+lifeSound.src="sounds/life4.mp3";
+
+var shootSound = new Audio;
+shootSound.src="sounds/shoot3.mp3";
+shootSound.volume = 0.6;
+
+var gameOverSound = new Audio;
+gameOverSound.src="sounds/gameover3.mp3";
+
+var mainMusic = document.getElementById('mainMusic');
+
+function playSound(sound) {
+  sound.currentTime=0; 
+  sound.play();
+}
+
+function stopSound(sound) {
+  sound.pause();
+}
 
 var fire = [];
 var enemies = [];
@@ -330,6 +364,7 @@ function movePlayer(e) {
   if (e.keyCode == 40||e.keyCode == 83) player.speedY = 8;
   if (e.keyCode == 32) {
       newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+      playSound(shootSound);
   }
 }
 
@@ -343,7 +378,11 @@ function stopPlayer(e) {
 function mouseFire (e) {
   e = e || window.event;
   e.preventDefault();
-  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+  if (e.pageY  > W/15||e.pageX > W/15) {
+    newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+    playSound(shootSound);
+  }
+  
 }
 
 function movePlayerMouse(e) {
@@ -362,6 +401,7 @@ function playerTouchStart(e) {
   touchShiftX = touchInfo.pageX-player.posX;
   touchShiftY = touchInfo.pageY-player.posY;
   newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+  playSound(shootSound);
 }
 
 function playerTouchEnd(e) {
@@ -587,6 +627,7 @@ function Cell () {
     }
   }
 }
+
 function checkCollisionsEnemies() {
     for(var i=0; i<enemies.length; i++) {
         var posX1 = enemies[i].posX;
@@ -602,6 +643,7 @@ function checkCollisionsEnemies() {
                 enemies.splice(i, 1);
                 i--;
                 newExplosion.addExplosion(posX1,posY1);
+                playSound(bangSound);
                 score += 100;
                 fire.splice(j, 1);
                 break;
@@ -613,6 +655,8 @@ function checkCollisionsEnemies() {
             enemies.splice(i, 1);
             i--;
             newExplosion.addExplosion(posX1,posY1);
+            playSound(collisionSound);
+            if ( navigator.vibrate ) window.navigator.vibrate(100); 
             lifesChildren = lifes.children;
             i = lifesChildren.length;
             lifes.removeChild(lifesChildren[i-1]);
@@ -634,6 +678,8 @@ function checkCollisionsEnemies() {
             var size2 = fire[j].size;
             img1.style.animation = 'none';
             if(boxCollides(posX1, posY1, size1, posX2, posY2, size2)) {
+                playSound(cellSound);
+                if ( navigator.vibrate ) window.navigator.vibrate(100); 
                 player.life--;
                 cells.splice(i, 1);
                 i--;
@@ -660,6 +706,7 @@ function checkCollisionsHealItems() {
         
         img2.style.animation = 'none';
         if(boxCollides(posX1, posY1, size1, player.posX, player.posY, player.size)) {
+            playSound(lifeSound);
             player.life++;
             healItems.splice(i, 1);
             i--;
@@ -688,6 +735,8 @@ function checkCollisionsHealItems() {
                     posX2 + size2, posY2 + size2);
 }
 function gameOver() {
+    playSound(gameOverSound);
+    stopSound(mainMusic);
     overlay.style.zIndex = 10;
     overlay.style.display = 'block';
     gameOverDiv.style.display = 'block';
@@ -730,6 +779,7 @@ function reset() {
   player.life = 4;
     player.update();
   drawLifes ();
+   playSound(mainMusic);
 };
 
 function drawLifes () {

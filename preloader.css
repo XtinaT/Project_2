@@ -5,8 +5,10 @@
   right: 0;
   bottom: 0;
   overflow: hidden;
-  background-color: #8383E1;
-  background-image: linear-gradient(30deg, #8383E1 20%,#EBE4EB 50%, #8383E1 80%);
+  background-color: #B4B4E8;
+  background-image: linear-gradient(#c6e4ee 0%, #c6e4ee 40%, #fed1ae 60%, #faa0b9 70%, #cb7dcb 80%, #757ecb 100%);
+
+
   z-index: 1001;
   color:white ;
 }

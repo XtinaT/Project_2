@@ -81,7 +81,7 @@ svg:hover {
   position:absolute;
   left:90%;
   top:25%;
-  font-size:3em;
+  font-size:3vw;
   font-family: 'Disko';
   color:#cebbff;
 }
@@ -104,6 +104,7 @@ svg:hover {
   position:absolute;
   left:80%;
   top:0px;
+  width:20vw;
   opacity:0;
 }
 @keyframes showReact

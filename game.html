@@ -12,6 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet">
   </head>
   <body>
+      <audio autoplay loop id='mainMusic'>
+        <source src="sounds/main.ogg" type="audio/ogg; codecs=vorbis">>
+        <source src="sounds/main.mp3" type="audio/mpeg" id='mainMusic'>
+      </audio>
      <div class="preloader">
     <svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
       <path fill="currentColor"
@@ -25,8 +29,8 @@
       </svg>
       <div id='score'></div>
       <div id='life'></div>
-      <img id='react1' width='200px' height='200px'> 
-      <img id='react2' width='200px' height='200px'> 
+      <img id='react1'> 
+      <img id='react2'> 
       </div>
 <div id='overlay'> 
     <div id="game-over">
@@ -35,7 +39,6 @@
     </div>
 </div>
         </div>
-    <script src="preloader1.js"></script>
     <script src="zepto.js"></script>
     <script src="touch.js"></script>
     <script src="script.js"></script>
