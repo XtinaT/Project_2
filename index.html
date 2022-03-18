@@ -21,20 +21,25 @@
   </div> 
     <div id='wrapper'>
         <p class='logo'>BEAT IT!</p>
-        <img src='img/doctors.png' alt='doctors' id = 'doc'>
+        <div class='menu'>
         <a href='./game.html'>
-        <input type='button' class="menu" value='New Game' onmouseover="playSound(hoverSound)" onclick="playSound(clickSound)"/></a>
-        <input type='button' class="menu" value='Rules' onclick="anim2()" onmouseover="playSound(hoverSound)"/>
-        <input type='button' class="menu" value='Results' onmouseover="playSound(hoverSound)" onclick="playSound(clickSound)"/>
+        <input type='button' class="menuElem" value='New Game' onmouseover="playSound(hoverSound)" onclick="playSound(clickSound)"/></a>
+        <input type='button' class="menuElem" value='Rules' onclick="anim2()" onmouseover="playSound(hoverSound)"/>
+        <input type='button' class="menuElem" value='Results' onmouseover="playSound(hoverSound)" onclick="playSound(clickSound)"/>
+          </div>
+      <img src='img/doctors.png' alt='doctors' id = 'doc'>
       <img src='img/viruspurple.png' alt='coronavirus' id = 'virus2'>
       <img src='img/viruslightblue.png' alt='coronavirus' id = 'virus1'>
       <img src='img/happy2.png' alt='whitebloodcell' id = 'cell1'>
       <img src='img/happy.png' alt='whitebloodcell' id = 'cell2'>
       <div id='rules' style = 'visibility:hidden'>
         <p>Пора уже навалять этому коронавирусу! И эта задача ляжет на плечи одного маленького, но очень шустрого лимфоцита, которому ты будешь помогать! Отстреливай зловредные вирусы, но будь осторожен, они очень опасны при столкновении! Также, будь внимателен и не повреди окружающие тебя клетки крови! И, конечно же, не забывай подкрепляться!</p>
-        <button id="button" onclick='anim1()'>OK</button>
+        <button class="button" onclick='anim1()'>OK</button>
       </div>
-      <div class='cover'><p>Please, rotate your device!</p></div>
+      <div class='cover'>
+        <p>Please, rotate your device!</p>
+        <input type='button' class="button" value='Do not rotate' onclick="cancelRotation()"/>
+      </div>
     </div>
     <script src="preloader.js"></script>
     <script src="scriptMainPage.js"></script>

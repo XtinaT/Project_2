@@ -27,8 +27,8 @@ window.addEventListener("resize", resize, false);
 function resize(e) {
   e = e || window.event;
   e.preventDefault;
-  H = document.body.offsetHeight;
-  W = document.body.offsetWidth;
+  H = window.innerHeight;
+  W = window.innerWidth;
   canvas.width = W;
   canvas.height = H;
   player.update();
