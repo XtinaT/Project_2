@@ -13,9 +13,14 @@ var body = document.getElementsByTagName("body");
 var wrapper = document.getElementById('wrapper');
 var W = window.innerWidth;
 var H = window.innerHeight;
-var standartSize = W/17; 
+var standartSize = W/17;
+var standartItemSize;
+W>H?standartItemSize=W/17:standartItemSize=H/17;
 var gameOverDiv = document.getElementById("game-over");
 var overlay = document.getElementById("overlay");
+let fireButton = document.getElementById('fireButton');
+fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
+fireButton.style.top = 0.8*H+'px';
 var lifes = document.getElementById('life');
 var lifesChildren;
 var i;
@@ -29,8 +34,12 @@ function resize(e) {
   e.preventDefault;
   H = window.innerHeight;
   W = window.innerWidth;
+  standartSize = W/17;
+  W>H?standartItemSize=W/17:standartItemSize=H/17;
   canvas.width = W;
   canvas.height = H;
+  fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
+  fireButton.style.top = 0.8*H+'px';
   player.update();
 }
 
@@ -116,35 +125,18 @@ function click (e) {
 
 var lastTime;
 
-var PreloadedImagesH = {};
-////////////////////////////////////////////////////////////////////////////////////////переписать!
-function PreloadImage(img) {
-  if (img in PreloadedImagesH) {
-    return;
-  }
-  var Img = new Image();
-  Img.src = img;
-  PreloadedImagesH[img] = true;
-}
-
-PreloadImage("img/back5.webp");
-PreloadImage("img/happy5.png");
-PreloadImage("img/virusgreen.png");
-PreloadImage("img/viruslightblue.png");
-PreloadImage("img/viruspurple.png");
-PreloadImage("img/virusred.png");
 
 var player = document.createElement("img");
 player.id = "player";
 player.setAttribute("src", "img/happy4.png");
 player.style.position = "absolute";
-player.style.width = standartSize + "px";
-player.style.height = standartSize + "px";
+player.style.width = standartItemSize + "px";
+player.style.height = standartItemSize + "px";
 wrapper.appendChild(player);
 player = {
   posX: 0,
   posY: H/2,
-  size: standartSize,
+  size: standartItemSize,
   speedX: 0,
   speedY: 0,
   life: 4,
@@ -182,9 +174,7 @@ function init() {
   player.update();
   wrapper.style.backgroundImage = "url('img/back5.webp')";
   wrapper.style.backgroundSize = "cover";
-  document.getElementById("play-again").addEventListener("click", function () {
-    reset();
-  });
+  document.getElementById("play-again").addEventListener("click",reset,false);
   reset();
   lastTime = Date.now();
   mainLoop();
@@ -197,11 +187,63 @@ function mainLoop() {
   RAF(mainLoop);
 }
 
+function gameOver() {
+    playSound(gameOverSound);
+    stopSound(mainMusic);
+    overlay.style.zIndex = 10;
+    overlay.style.display = 'block';
+    gameOverDiv.style.display = 'block';
+    gameOverDiv.style.left = (W  - gameOverDiv.offsetWidth) / 2 + "px";
+    gameOverDiv.style.top = (H  - gameOverDiv.offsetHeight) / 2 + "px";
+
+    var coords = [
+      [gameOverDiv.offsetLeft - standartItemSize*0.8, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
+      [gameOverDiv.offsetLeft - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
+    ];
+    var images = ['/img/deadvirus1.png','/img/deadvirus2.png', '/img/deadvirus3.png', '/img/deadvirus4.png'];
+
+    for (var i=0;i<4;i++) {
+      var img = document.createElement('img');
+      img.setAttribute('src',images[i]);
+      img.style.width = standartItemSize*0.8 +'px';
+      img.style.position = 'absolute';
+      img.style.left = coords[i][0]+'px' ;
+      img.style.top = coords[i][1]+'px' ;
+      overlay.appendChild(img);
+    }
+    
+  
+    isGameOver = true;
+    fire = [];
+    enemies = [];
+    cells = [];
+    healItems = [];
+}
+
+function reset() {
+    document.getElementById('overlay').style.display = 'none';
+    isGameOver = false;
+    gameTime = 0;
+    score = 0;
+  player.posX = 0;
+  player.posY= (H-player.size)/2;
+  player.life = 4;
+    player.update();
+  drawLifes ();
+   playSound(mainMusic);
+};
+
+
 /////////////////////////////////////////////////////////////////////////////////каша-упорядочить
 var newEnemy = new Enemy(); 
 var newHealItem = new HealItem();
 var newCell = new Cell();
 var newExplosion = new Explosion;
+
+var background = new Image();
+background.src = "img/back5.webp";
 
 var enemy1 = new Image();
 enemy1.src = "img/virusgreen.png";
@@ -307,19 +349,19 @@ function update(dt) {
   if (!isGameOver) {
     newFire.firePaint();
   newFire.fireMove();
-  if((Math.random() < 1 - Math.pow(.999, gameTime))&&enemies.length<=7) {
+  if((Math.random() < 1 - Math.pow(.996, gameTime))&&enemies.length<=7) {
     newEnemy.addEnemy();
   }
   newEnemy.enemyPaint();
   newEnemy.enemyMove();
   
-  if((Math.random() < 1 - Math.pow(.999, gameTime))&&healItems.length==0&&player.life<4) {
+  if(healItems.length==0&&player.life<4) {
     newHealItem.addHealItem();
   }
   newHealItem.healItemPaint();
   newHealItem.healItemMove();
 
-  if((Math.random() < 1 - Math.pow(.999, gameTime))&&cells.length<=5) {
+  if((Math.random() < 1 - Math.pow(.996, gameTime))&&cells.length<=5) {
     newCell.addCell();
   }
   newCell.cellPaint();
@@ -392,6 +434,8 @@ function movePlayerMouse(e) {
   player.posY = Math.round(e.pageY - player.size/2);
 }
 
+let currentPosX;
+let currentPosY;
 function playerTouchStart(e) {
   var self = this;
   e = e || window.event;
@@ -400,8 +444,8 @@ function playerTouchStart(e) {
   var touchInfo = e.targetTouches[0];
   touchShiftX = touchInfo.pageX-player.posX;
   touchShiftY = touchInfo.pageY-player.posY;
-  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
-  playSound(shootSound);
+  fireButton.style.visibility = "visible";
+  fireButton.style.zIndex = 100;
 }
 
 function playerTouchEnd(e) {
@@ -416,7 +460,23 @@ function movePlayerTouch(e) {
     var touchInfo = e.targetTouches[0];
     player.posX = touchInfo.pageX - touchShiftX;
     player.posY = touchInfo.pageY - touchShiftY;
+    currentPosX = player.posX;
+    currentPosY = player.posY;
   }
+
+function touchFire(e) {
+  e = e || window.event;
+  e.preventDefault();
+  player.posX = currentPosX;
+  player.posY = currentPosY;
+  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+  playSound(shootSound);
+}
+
+/*$('.wrapper').doubleTap(function(){
+  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
+  playSound(shootSound);
+})*/
 
 
 function Fire() {
@@ -459,10 +519,10 @@ function Enemy () {
   
   self.addEnemy = function () {
     var enemy = {
-    posX : W+standartSize/10, 
-    posY:randomDiap(0,H-standartSize*0.8),
+    posX : W+standartItemSize/10, 
+    posY:randomDiap(0,H-standartItemSize*0.8),
     speed:randomDiap(1, 4),
-    size:standartSize*0.8,
+    size:standartItemSize*0.8,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 4),
@@ -519,10 +579,10 @@ function HealItem () {
   
   self.addHealItem = function () {
     var item = {
-    posX : W+standartSize/10, 
-    posY:randomDiap(0,H-standartSize*0.8),
+    posX : W+standartItemSize/10, 
+    posY:randomDiap(0,H-standartItemSize*0.8),
     speed:randomDiap(3, 4),
-    size:standartSize*0.8,
+    size:standartItemSize*0.8,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 4),
@@ -580,10 +640,10 @@ function Cell () {
   
   self.addCell = function () {
     var item = {
-    posX : W+standartSize/10, 
-    posY:randomDiap(0,H-standartSize*0.6),
+    posX : W+standartItemSize/10, 
+    posY:randomDiap(0,H-standartItemSize*0.6),
     speed:randomDiap(3, 4),
-    size:standartSize*0.6,
+    size:standartItemSize*0.6,
     dell:false,
     node:true,
     randomImg : randomDiap(1, 3),
@@ -656,7 +716,7 @@ function checkCollisionsEnemies() {
             i--;
             newExplosion.addExplosion(posX1,posY1);
             playSound(collisionSound);
-            if ( navigator.vibrate ) window.navigator.vibrate(100); 
+            if (navigator.vibrate) window.navigator.vibrate(100); 
             lifesChildren = lifes.children;
             i = lifesChildren.length;
             lifes.removeChild(lifesChildren[i-1]);
@@ -679,7 +739,7 @@ function checkCollisionsEnemies() {
             img1.style.animation = 'none';
             if(boxCollides(posX1, posY1, size1, posX2, posY2, size2)) {
                 playSound(cellSound);
-                if ( navigator.vibrate ) window.navigator.vibrate(100); 
+                if (navigator.vibrate) window.navigator.vibrate(100); 
                 player.life--;
                 cells.splice(i, 1);
                 i--;
@@ -715,7 +775,7 @@ function checkCollisionsHealItems() {
             if (lifesChildren.length<4) {
             var image = document.createElement('img');
             image.setAttribute('src', 'img/h4.png');
-            image.setAttribute('width', standartSize/2);
+            image.setAttribute('width', standartItemSize/2);
             lifes.appendChild(image);
             }
         }
@@ -734,59 +794,13 @@ function checkCollisionsHealItems() {
                     posX2, posY2,
                     posX2 + size2, posY2 + size2);
 }
-function gameOver() {
-    playSound(gameOverSound);
-    stopSound(mainMusic);
-    overlay.style.zIndex = 10;
-    overlay.style.display = 'block';
-    gameOverDiv.style.display = 'block';
-    gameOverDiv.style.left = (W  - gameOverDiv.offsetWidth) / 2 + "px";
-    gameOverDiv.style.top = (H  - gameOverDiv.offsetHeight) / 2 + "px";
 
-    var coords = [
-      [gameOverDiv.offsetLeft - standartSize*0.8, gameOverDiv.offsetTop],
-      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth, gameOverDiv.offsetTop],
-      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth - standartSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartSize*0.4],
-      [gameOverDiv.offsetLeft - standartSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartSize*0.4],
-    ];
-    var images = ['/img/deadvirus1.png','/img/deadvirus2.png', '/img/deadvirus3.png', '/img/deadvirus4.png'];
-
-    for (var i=0;i<4;i++) {
-      var img = document.createElement('img');
-      img.setAttribute('src',images[i]);
-      img.style.width = standartSize*0.8 +'px';
-      img.style.position = 'absolute';
-      img.style.left = coords[i][0]+'px' ;
-      img.style.top = coords[i][1]+'px' ;
-      overlay.appendChild(img);
-    }
-    
-  
-    isGameOver = true;
-    fire = [];
-    enemies = [];
-    cells = [];
-    healItems = [];
-}
-
-function reset() {
-    document.getElementById('overlay').style.display = 'none';
-    isGameOver = false;
-    gameTime = 0;
-    score = 0;
-  player.posX = 0;
-  player.posY= (H-player.size)/2;
-  player.life = 4;
-    player.update();
-  drawLifes ();
-   playSound(mainMusic);
-};
 
 function drawLifes () {
   for (var i=0;i<player.life;i++) {
     var image = document.createElement('img');
     image.setAttribute('src', 'img/h4.png');
-    image.setAttribute('width', standartSize/2);
+    image.setAttribute('width', standartItemSize/2);
     lifes.appendChild(image);
   }
 }
@@ -801,7 +815,7 @@ function Explosion () {
     animX:0,
     animY:0,
     speed:0,
-    size:standartSize*0.8,
+    size:standartItemSize*0.8,
     accel:0.2,
   }
   explosions.push(explosion);
@@ -822,3 +836,12 @@ ctx.drawImage(explosionI, 200 * Math.floor(explosions[i].animX), 200 * Math.floo
     }
   }
 }
+
+window.onbeforeunload = function(e) {
+  e = e || window.event;
+  e.preventDefault(); 
+  if (isGameOver == false) {
+    e.returnValue = 'Прогресс может быть утерян!';
+    console.log('here');
+  }
+};

@@ -118,3 +118,19 @@ svg:hover {
   cursor:none;
 }
 
+#fireButton {
+  position:absolute;
+  visibility:hidden;
+  background-color: white;
+  border: solid 3px #CFE0F1;
+  border-radius:50%;
+  color:#B4B4E8;
+  font-size:2em;
+  font-family: 'Disko';
+}
+
+@media all and (max-width:50em){
+  #fireButton {
+    font-size:1.5em;
+  }
+}

@@ -34,7 +34,6 @@ function resize(e) {
   e.preventDefault;
   W = window.innerWidth;
   setPosition();
-  console.log('here');
   document.getElementById('wrapper').style.width = '100%';
 }
 
