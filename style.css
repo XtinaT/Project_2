@@ -100,15 +100,16 @@ body{
 }
 
 
- img {
-   position:absolute;
-   width:10vw;
- }
-
  img#doc {
    position:absolute;
    width:20vw;
  }
+img#virus1, img#virus2, img#cell1, img#cell2 {
+   position:absolute;
+   width:10vw;
+ }
+
+
 
 
 .button {

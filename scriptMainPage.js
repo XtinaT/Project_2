@@ -1,5 +1,5 @@
 'use strict'
-var W = window.innerWidth;
+wrapper.style.backgroundImage = "url('img/back3.jpg')";
 
 function setPosition () {
   let menu = document.getElementsByClassName('menu')[0];
@@ -28,14 +28,7 @@ function setPosition () {
 setPosition();
 
 
-window.addEventListener("resize", resize, false);
-function resize(e) {
-  e = e || window.event;
-  e.preventDefault;
-  W = window.innerWidth;
-  setPosition();
-  document.getElementById('wrapper').style.width = '100%';
-}
+
 
 function anim1() {
   var div=document.getElementById('rules');
@@ -54,16 +47,7 @@ function anim2() {
   playSound(clickSound);
 }
 
-var hoverSound = new Audio;
-hoverSound.src = "sounds/click.mp3";
 
-var clickSound = new Audio;
-clickSound.src = "sounds/click1.mp3";
-
-function playSound(sound) {
-  sound.currentTime=0; 
-  sound.play();
-}
 
 function cancelRotation() {
   var cover = document.getElementsByClassName('cover');

@@ -1,6 +1,10 @@
 'use strict'
-
-var RAF =
+var body = document.getElementsByTagName("body");
+var wrapper = document.getElementById('wrapper');
+var W = window.innerWidth;
+var H = window.innerHeight;
+var isGameOver = true;
+ var RAF =
   window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
   window.mozRequestAnimationFrame ||
@@ -9,43 +13,38 @@ var RAF =
   function (callback) {
     window.setTimeout(callback, 1000 / 60);
   };
-var body = document.getElementsByTagName("body");
-var wrapper = document.getElementById('wrapper');
-var W = window.innerWidth;
-var H = window.innerHeight;
+
 var standartSize = W/17;
 var standartItemSize;
 W>H?standartItemSize=W/17:standartItemSize=H/17;
-var gameOverDiv = document.getElementById("game-over");
-var overlay = document.getElementById("overlay");
-let fireButton = document.getElementById('fireButton');
-fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
-fireButton.style.top = 0.8*H+'px';
-var lifes = document.getElementById('life');
-var lifesChildren;
-var i;
-var svg = document.getElementById('pause');
-svg.setAttribute('width',W/15);
-svg.setAttribute('height',W/15);
-
-window.addEventListener("resize", resize, false);
-function resize(e) {
-  e = e || window.event;
-  e.preventDefault;
-  H = window.innerHeight;
-  W = window.innerWidth;
-  standartSize = W/17;
-  W>H?standartItemSize=W/17:standartItemSize=H/17;
-  canvas.width = W;
-  canvas.height = H;
-  fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
-  fireButton.style.top = 0.8*H+'px';
-  player.update();
-}
+var gameOverDiv;
+var overlay;
 
 var canvas = document.createElement("canvas");
 canvas.id = "canvas";
 var ctx = canvas.getContext("2d");
+
+var score = 0;
+var scoreEl;
+var lifes;
+var lifesChildren;
+var fireButton;
+
+function drawGame() {
+  console.log('here');
+  
+  overlay = document.getElementById("overlay");
+  gameOverDiv = document.getElementById("game-over");
+  fireButton = document.getElementById('fireButton');
+  fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
+  fireButton.style.top = 0.8*H+'px';
+  scoreEl = document.getElementById("score");
+  lifes = document.getElementById('life'); 
+  var i;
+  var svg = document.getElementById('pause');
+  svg.setAttribute('width',W/15);
+  svg.setAttribute('height',W/15);
+  
 canvas.width = W;
 canvas.height = H;
 wrapper.appendChild(canvas);
@@ -123,16 +122,21 @@ function click (e) {
   
 }
 
+}
+
+function drawLifes() {
+  for (var i=0;i<player.life;i++) {
+    var image = document.createElement('img');
+    image.setAttribute('src', 'img/h4.png');
+    image.setAttribute('width', standartItemSize/2);
+    lifes.appendChild(image);
+  }
+}  
+
 var lastTime;
 
 
-var player = document.createElement("img");
-player.id = "player";
-player.setAttribute("src", "img/happy4.png");
-player.style.position = "absolute";
-player.style.width = standartItemSize + "px";
-player.style.height = standartItemSize + "px";
-wrapper.appendChild(player);
+var player;
 player = {
   posX: 0,
   posY: H/2,
@@ -140,6 +144,15 @@ player = {
   speedX: 0,
   speedY: 0,
   life: 4,
+  create: function() {
+    var playerEl = document.createElement("img");
+    playerEl.id = "player";
+    playerEl.setAttribute("src", "img/happy4.png");
+    playerEl.style.position = "absolute";
+    playerEl.style.width = standartItemSize + "px";
+    playerEl.style.height = standartItemSize + "px";
+    wrapper.appendChild(playerEl);
+  },
   update: function () {
     var playerEl = document.getElementById("player");
     playerEl.style.left = this.posX + "px";
@@ -160,18 +173,37 @@ player = {
   },
 };
 
-window.onload = function (e) {
-  e = e || window.event;
-  e.preventDefault();
-  document.body.classList.add('loaded_hiding');
-  window.setTimeout(function () {
-  document.body.classList.add('loaded');
-  document.body.classList.remove('loaded_hiding');
-  }, 500);
-  init();
-};
+var newEnemy = new Enemy(); 
+var newHealItem = new HealItem();
+var newCell = new Cell();
+var newExplosion = new Explosion;
+var newFire = new Fire();
+
+var fire = [];
+var enemies = [];
+var explosions = [];
+var cells = [];
+var healItems = [];
+var explosions = [];
+
+var lastFire = Date.now();
+var gameTime = 0;
+isGameOver = false;
+
+
+
+//init();
 function init() {
+  player.create();
   player.update();
+  var play = document.getElementById("player");
+  play.addEventListener("touchstart", playerTouchStart, {passive:false});
+  play.addEventListener('touchmove',movePlayerTouch,{passive:false});
+  play.addEventListener("touchend", playerTouchEnd, {passive:false});
+  addEventListener("keydown", movePlayer, false);
+addEventListener("keyup", stopPlayer, false);
+addEventListener("mousemove", movePlayerMouse, false);
+addEventListener("click", mouseFire, false);
   wrapper.style.backgroundImage = "url('img/back5.webp')";
   wrapper.style.backgroundSize = "cover";
   document.getElementById("play-again").addEventListener("click",reset,false);
@@ -202,7 +234,7 @@ function gameOver() {
       [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
       [gameOverDiv.offsetLeft - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
     ];
-    var images = ['/img/deadvirus1.png','/img/deadvirus2.png', '/img/deadvirus3.png', '/img/deadvirus4.png'];
+    
 
     for (var i=0;i<4;i++) {
       var img = document.createElement('img');
@@ -223,115 +255,22 @@ function gameOver() {
 }
 
 function reset() {
+  //drawGame();
     document.getElementById('overlay').style.display = 'none';
     isGameOver = false;
     gameTime = 0;
     score = 0;
-  player.posX = 0;
-  player.posY= (H-player.size)/2;
-  player.life = 4;
+    player.posX = 0;
+    player.posY= (H-player.size)/2;
+    player.life = 4;
     player.update();
-  drawLifes ();
-   playSound(mainMusic);
+    drawLifes();
+    playSound(mainMusic);
 };
 
 
 /////////////////////////////////////////////////////////////////////////////////каша-упорядочить
-var newEnemy = new Enemy(); 
-var newHealItem = new HealItem();
-var newCell = new Cell();
-var newExplosion = new Explosion;
 
-var background = new Image();
-background.src = "img/back5.webp";
-
-var enemy1 = new Image();
-enemy1.src = "img/virusgreen.png";
-
-var enemy2 = new Image();
-enemy2.src = "img/viruslightblue.png";
-
-var enemy3 = new Image();
-enemy3.src = "img/viruspurple.png";
-
-var enemy4 = new Image();
-enemy4.src = "img/virusred.png";
-
-var cell1 = new Image();
-cell1.src = "img/plate.png";
-
-var cell2 = new Image();
-cell2.src = "img/redcell1.png";
-
-var cell3 = new Image();
-cell3.src = "img/whitecell.png";
-
-var healItem1 = new Image();
-healItem1.src = "img/pills.png";
-
-var healItem2 = new Image();
-healItem2.src = "img/sanitizer.png";
-
-var healItem3 = new Image();
-healItem3.src = "img/suringe5.png";
-
-var healItem4 = new Image();
-healItem4.src = "img/vaccine.png";
-
-var shoot = new Image();
-shoot.src = "img/shoot1.png";
-
-var explosionI = new Image();
-explosionI.src = "img/bangspr.png";
-
-var newFire = new Fire();
-
-var clickSound = new Audio;
-clickSound.src = "sounds/click1.mp3";
-
-var bangSound = new Audio;
-bangSound.src="sounds/bang5.mp3";
-
-var collisionSound = new Audio;
-collisionSound.src="sounds/collision1.mp3";
-
-var cellSound = new Audio;
-cellSound.src="sounds/cell1.mp3";
-
-var lifeSound = new Audio;
-lifeSound.src="sounds/life4.mp3";
-
-var shootSound = new Audio;
-shootSound.src="sounds/shoot3.mp3";
-shootSound.volume = 0.6;
-
-var gameOverSound = new Audio;
-gameOverSound.src="sounds/gameover3.mp3";
-
-var mainMusic = document.getElementById('mainMusic');
-
-function playSound(sound) {
-  sound.currentTime=0; 
-  sound.play();
-}
-
-function stopSound(sound) {
-  sound.pause();
-}
-
-var fire = [];
-var enemies = [];
-var explosions = [];
-var cells = [];
-var healItems = [];
-var explosions = [];
-
-var lastFire = Date.now();
-var gameTime = 0;
-var isGameOver = false;
-
-var score = 0;
-var scoreEl = document.getElementById("score");
 
 function randomDiap(n, m) {
   return Math.floor(Math.random() * (m - n + 1)) + n;
@@ -344,8 +283,10 @@ function toRadians(angle) {
 function update(dt) {
   gameTime += dt;
   ctx.clearRect(0, 0, W, H);
-  player.move();
+  if (!isGameOver) {
+    player.move();
   player.update();
+  }
   if (!isGameOver) {
     newFire.firePaint();
   newFire.fireMove();
@@ -375,18 +316,15 @@ function update(dt) {
     newExplosion.explosionAnimate();
     newExplosion.explosionPaint();
   }
-  scoreEl.innerHTML = score;
+    scoreEl.innerHTML = score;
+  
 }
 
-addEventListener("keydown", movePlayer, false);
-addEventListener("keyup", stopPlayer, false);
-addEventListener("mousemove", movePlayerMouse, false);
-addEventListener("click", mouseFire, false);
 
-var play = document.getElementById('player');
-play.addEventListener("touchstart", playerTouchStart, {passive:false});
-play.addEventListener('touchmove',movePlayerTouch,{passive:false});
-play.addEventListener("touchend", playerTouchEnd, {passive:false});
+
+
+
+
  
 $('document').bind('tap',function () {
   newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
@@ -796,14 +734,7 @@ function checkCollisionsHealItems() {
 }
 
 
-function drawLifes () {
-  for (var i=0;i<player.life;i++) {
-    var image = document.createElement('img');
-    image.setAttribute('src', 'img/h4.png');
-    image.setAttribute('width', standartItemSize/2);
-    lifes.appendChild(image);
-  }
-}
+
 
 function Explosion () {
   var self = this;
@@ -844,4 +775,5 @@ window.onbeforeunload = function(e) {
     e.returnValue = 'Прогресс может быть утерян!';
     console.log('here');
   }
-};
+}; 
+
