@@ -1,5 +1,5 @@
 'use strict'
-wrapper.style.backgroundImage = "url('img/back3.jpg')";
+
 
 function setPosition () {
   let menu = document.getElementsByClassName('menu')[0];
@@ -24,8 +24,9 @@ function setPosition () {
   let doc = document.getElementById('doc');
   doc.style.left = (menuCoords.right-W/5)+'px';
   doc.style.top = (menuCoords.top-W/6)+'px';
+  wrapper.style.backgroundImage = "url('img/back3.jpg')";
 }
-setPosition();
+//setPosition();
 
 
 
@@ -47,10 +48,48 @@ function anim2() {
   playSound(clickSound);
 }
 
+function anim3() {
+  var div=document.getElementById('playerName');
+  div.style.height='auto';
+  var targetHeight=div.offsetHeight;
+  div.style.height='0px';
+  setTimeout(function() { 
+    div.style.height=targetHeight+"px"; 
+  }, 0);
+  div.style.visibility="visible";
+  setTimeout(function() { 
+    document.getElementById('playerNameField').focus();
+  }, 1500);
+  playSound(clickSound);
+ 
+}
 
+function anim4() {
+  var div=document.getElementById('playerName');
+  div.style.visibility="hidden";
+  div.style.height="0px";
+}
+
+function anim5() {
+  var divRecords=document.getElementById('records');
+  console.log(divRecords);
+  divRecords.style.height='auto';
+  var targetHeight=divRecords.offsetHeight;
+  divRecords.style.height='0px';
+  setTimeout(function() { 
+    divRecords.style.height=targetHeight+"px"; 
+  }, 0);
+  divRecords.style.visibility="visible";
+}
+
+function anim6() {
+  var divRecords=document.getElementById('records');
+  divRecords.style.visibility="hidden";
+  divRecords.style.height="0px";
+  playSound(clickSound);
+}
 
 function cancelRotation() {
   var cover = document.getElementsByClassName('cover');
-  console.log(cover);
   cover[0].style.display = 'none';
 }

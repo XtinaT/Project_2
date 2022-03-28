@@ -18,7 +18,7 @@ body{
     }
 }
 
-#rules {
+.hiddenElements{
   position:absolute;
   background-color: #B4B4E8;
   border: solid 3px #CFE0F1;
@@ -28,17 +28,37 @@ body{
   text-align:center;
   padding:10px 0 10px 0;
   font-family:'Comfortaa', cursive;
-  font-size:2vw;
+  font-size:4vh;
   color:white;
   transition-duration: 1s;
   transition-timing-function: linear;
   overflow: hidden;
-  
 }
+
+#rules{
+  padding:10px 10px 10px 10px;
+}
+#records>div{
+  min-height: 4vh;
+  text-align:left;
+  padding-left: 10%;
+  font-size:4vh;
+}
+
+#playerName input {
+  width:70%;
+  background-color: #8383E1;
+}
+#playerName input:focus {
+  margin:10px;
+  color:#8383E1;
+  background-color: white;
+}
+
+
 #wrapper {
   width:100%;
   height:100vh;
-  background-image:url('img/back3.jpg');
   background-size:cover;
   display:flex;
   flex-direction:column;
@@ -131,8 +151,11 @@ img#virus1, img#virus2, img#cell1, img#cell2 {
   width:90vw;
   font-size:4vw;
 }
-  #rules {
+  .hiddenElements {
   width:90vw;
-  font-size:3vw; 
+  font-size:3vh; 
+}
+ #records.hiddenElements>div{
+  font-size:3vh; 
 }
 }

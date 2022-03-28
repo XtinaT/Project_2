@@ -16,6 +16,8 @@ body{
   height:100vh;
 }
 #header {
+  display:flex;
+  justify-content:space-between;
   position:absolute;
   width:100%;
   background-color: rgba(0, 0, 0, 0.4);
@@ -24,9 +26,17 @@ body{
 }
 #header:hover {
   cursor:pointer;
-
 }
 
+#score {
+  text-align: center;
+  font-size:3vw;
+  font-family: 'Disko';
+  color:#cebbff;
+}
+#life {
+  flex-basis:202px;
+}
 @keyframes bounce {
 	0%, 20%, 60%, 100% {
 		transform: translateY(0);
@@ -74,17 +84,7 @@ svg:hover {
   position:absolute;
 }
 
-#score {
-  text-align: center;
-  position:absolute;
-  left:80vw;
-  position:absolute;
-  left:90%;
-  top:25%;
-  font-size:3vw;
-  font-family: 'Disko';
-  color:#cebbff;
-}
+
 
 #overlay {
   position:absolute;
@@ -94,11 +94,6 @@ svg:hover {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-#life {
-  position:absolute;
-  left:70%;
-  top:25%;
-}
 
 #react1, #react2 {
   position:absolute;

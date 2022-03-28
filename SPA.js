@@ -8,16 +8,29 @@
   // отслеживаем изменение закладки в УРЛе
   // оно происходит при любом виде навигации
   // в т.ч. при нажатии кнопок браузера ВПЕРЁД/НАЗАД
-  window.onhashchange=switchToStateFromURLHash;
-
+let prev;
+  window.onhashchange = function() {
+    if (location.hash != '#Game') {
+     if (!isGameOver) {
+       let answer = confirm('Прогресс может быть утерян!');
+        if(answer) {
+          location.hash = 'Main';
+          switchToStateFromURLHash();
+        } else {
+          location.hash = 'Game';
+          return;
+     } 
+    } else {
+     switchToStateFromURLHash();
+    }
+    }
+      if (isGameOver) switchToStateFromURLHash(); 
+    
+}
   // текущее состояние приложения
-  // это Model из MVC
+
   var SPAState={};
-  function include(url) {
-    var script = document.createElement('script');
-    script.src = url;
-    document.body.appendChild(script);
-  }
+
 var body = document.getElementsByTagName("body");
 var wrapper = document.getElementById('wrapper');
 var W = window.innerWidth;
@@ -63,6 +76,13 @@ healItem4.src = "img/vaccine.png";
 
 var shoot = new Image();
 shoot.src = "img/shoot1.png";
+
+var react1 = new Image();
+react1.src = "img/sad.png";
+
+var react2 = new Image();
+react2.src = "img/happydoc.png";
+
 
 var explosionI = new Image();
 explosionI.src = "img/bangspr.png";
@@ -124,6 +144,23 @@ function resize(e) {
   canvas.height = H;
   fireButton.style.left = (W-fireButton.offsetWidth)/2+'px';
   fireButton.style.top = 0.8*H+'px';
+  gameOverDiv.style.left = (W  - gameOverDiv.offsetWidth) / 2 + "px";
+  gameOverDiv.style.top = (H  - gameOverDiv.offsetHeight) / 2 + "px";
+  let viruses = overlay.getElementsByTagName('img');
+  coords = [
+      [gameOverDiv.offsetLeft - standartItemSize*0.8, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth, gameOverDiv.offsetTop],
+      [gameOverDiv.offsetLeft + gameOverDiv.offsetWidth - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
+      [gameOverDiv.offsetLeft - standartItemSize*0.4, gameOverDiv.offsetTop + gameOverDiv.offsetHeight - standartItemSize*0.4],
+    ];
+  for (var i=0;i<4;i++) {
+      var img = viruses[i];
+      img.style.width = standartItemSize*0.8 +'px';
+      img.style.left = coords[i][0]+'px' ;
+      img.style.top = coords[i][1]+'px' ;
+    }
+  player.posX = 0;
+  player.posY = H/2;
   player.update();
   }
   
@@ -148,53 +185,78 @@ function resize(e) {
     if ( stateStr!="" ) { // если закладка непустая, читаем из неё состояние и отображаем
       var parts=stateStr.split("_")
       SPAState={ pagename: parts[0] }; // первая часть закладки - номер страницы
-    } else
+    } else {
+      location.hash = 'Main';
       SPAState={pagename:'Main'}; // иначе показываем главную страницу
+    }
+      
 
     console.log('Новое состояние приложения:');
     console.log(SPAState);
 
     // обновляем вариабельную часть страницы под текущее состояние
-    // это реализация View из MVC - отображение состояния модели в HTML-код
+
     var pageHTML="";
     var preloaderHTML="";
     
     switch ( SPAState.pagename ) {
       case 'Main':
-        if (!isGameOver) {
+       if (!isGameOver) {
               gameOver();
         }
-        pageHTML+="<p class='logo'>BEAT IT!</p><div class='menu'>";
-        pageHTML+="<input type='button' class='menuElem' value='New Game' onmouseover='playSound(hoverSound)'  onclick='switchToGamePage()'/>";
-        pageHTML+="<input type='button' class='menuElem' value='Rules' onclick='anim2()' onmouseover='playSound(hoverSound)'/>";
-        pageHTML+="<input type='button' class='menuElem' value='Results' onmouseover='playSound(hoverSound)' onclick='playSound(clickSound)'/></div>";
-        pageHTML+="<img src='img/doctors.png' alt='doctors' id = 'doc'><img src='img/viruspurple.png' alt='coronavirus' id = 'virus2'>";
-        pageHTML+="<img src='img/viruslightblue.png' alt='coronavirus' id = 'virus1'>";
-        pageHTML+="<img src='img/happy2.png' alt='whitebloodcell' id = 'cell1'>";
-        pageHTML+="<img src='img/happy.png' alt='whitebloodcell' id = 'cell2'>";
-        pageHTML+="<div id='rules' style = 'visibility:hidden'>";
-        pageHTML+="<p>Пора уже навалять этому коронавирусу! И эта задача ляжет на плечи одного маленького, но очень шустрого лимфоцита, которому ты будешь помогать! Отстреливай зловредные вирусы, но будь осторожен, они очень опасны при столкновении! Также, будь внимателен и не повреди окружающие тебя клетки крови! И, конечно же, не забывай подкрепляться!</p>";
-      pageHTML+="<button class='button' onclick='anim1()'>OK</button></div><div class='cover'><p>Please, rotate your device!</p>";
-        pageHTML+="<input type='button' class='button' value='Do not rotate' onclick='cancelRotation()''/></div>";
-        preloaderHTML+='<svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">';
-        preloaderHTML+='<path fill="currentColor"';
-        preloaderHTML+='d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"></path></svg>';
-        //include("scriptMainPage.js");
+        pageHTML+=`<p class="logo">BEAT IT!</p>
+    <div class="menu">
+      <input type="button" class="menuElem" value="New Game" onmouseover="playSound(hoverSound)" onclick="wantToPlay()"/>
+      <input type="button" class="menuElem" value="Rules" onclick="anim2()" onmouseover="playSound(hoverSound)"/>
+      <input type="button" class="menuElem" value="Results" onmouseover="playSound(hoverSound)" onclick="showRecordsss()"/>
+    </div>
+    <img src="img/doctors.png" alt="doctors" id="doc" />
+    <img src="img/viruspurple.png" alt="coronavirus"id="virus2"/>
+    <img src="img/viruslightblue.png" alt="coronavirus" id="virus1" />
+    <img src="img/happy2.png" alt="whitebloodcell" id="cell1" />
+    <img src="img/happy.png" alt="whitebloodcell" id="cell2" />
+    <div id="rules" style="visibility: hidden" class="hiddenElements">
+      <p>
+        Пора уже навалять этому коронавирусу! И эта задача ляжет на плечи одного
+        маленького, но очень шустрого лимфоцита, которому ты будешь помогать!
+        Отстреливай зловредные вирусы, но будь осторожен, они очень опасны при
+        столкновении! Также, будь внимателен и не повреди окружающие тебя клетки
+        крови! И, конечно же, не забывай подкрепляться!
+      </p>
+      <button class="button" onclick="anim1()">OK</button>
+    </div>
+    <div class="cover">
+      <p>Please, rotate your device!</p>
+      <input type="button" class="button" value="Do not rotate" onclick="cancelRotation()"/>
+    </div>
+    <div id="playerName" style="visibility: hidden" class="hiddenElements">
+      <input type="text" class="menuElem" id="playerNameField" placeholder="Enter your name" onblur="anim4()"
+      /><button class="button" onclick="startGame()">OK</button>
+    </div>
+    <div id="records" style="visibility: hidden" class="hiddenElements">
+      <div></div>
+      <br /><button class="button" onclick="anim6()">Close</button><br />
+    </div>`;
+        
+        
+        preloaderHTML+=`<svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"></path></svg>`;
+
         break;
       case 'Game':
-        //pageHTML+="<audio autoplay loop id='mainMusic'><source src='sounds/main.ogg' type='audio/ogg; codecs=vorbis'>";
-        pageHTML+="<source src='sounds/main.mp3' type='audio/mpeg' id='mainMusic'></audio>";
-        pageHTML+="<div id='header'><svg id='pause' xmlns='http://www.w3.org/2000/svg'></svg>";
-        pageHTML+="<div id='score'></div><div id='life'></div><img id='react1'> <img id='react2'></div>";
-        pageHTML+="<div id='overlay'><div id='game-over'><h1>GAME OVER</h1><button id='play-again'>Play Again</button></div></div>";
-        pageHTML+="<input type='button' id='fireButton' value='Fire' onclick='touchFire()'/>";
+        pageHTML+=`<source src='sounds/main.mp3' type='audio/mpeg' id='mainMusic'></audio>
+          <div id='header'><svg id='pause' xmlns='http://www.w3.org/2000/svg'></svg>
+          <div id='score'></div><div id='life'></div><img id='react1'> <img id='react2'></div>
+          <div id='overlay'><div id='game-over'><h1>GAME OVER</h1><button id='play-again'>Play Again</button></div></div>
+          <input type='button' id='fireButton' value='Fire' onclick='touchFire()'/>`;
         preloaderHTML="";
-   
-        //include("script.js");
         break;
     }
     document.getElementById('wrapper').innerHTML=pageHTML;
     document.getElementsByClassName('preloader')[0].innerHTML=preloaderHTML;
+    if (SPAState.pagename=='Main') {
+      setPosition();
+    }
     if (SPAState.pagename=='Game') {
       drawGame();
       init();
@@ -215,12 +277,46 @@ function resize(e) {
   }
 
 
-
-
   function switchToGamePage() {
+    playSound(clickSound);
     switchToState( { pagename:'Game' } );
   }
 
   // переключаемся в состояние, которое сейчас прописано в закладке УРЛ
   switchToStateFromURLHash();
+
+window.onbeforeunload = function(e) {
+  e = e || window.event;
+  e.preventDefault(); 
+  if (isGameOver == false) {
+    e.returnValue = 'Прогресс может быть утерян!';
+  }
+};
+
+function wantToPlay(e) {
+  e = e || window.event;
+  e.preventDefault(); 
+  anim3();
+}
+
+let playerNameField;
+
+function startGame(e) {
+  e = e || window.event;
+  e.preventDefault();
+  playSound(clickSound);
+  playerNameField = document.getElementById('playerNameField');
+  console.log(playerNameField.value);
+  if (playerNameField.value) {
+    switchToGamePage();
+  }
+}
+
+function showRecordsss(e) {
+  e = e || window.event;
+  e.preventDefault();
+  refreshRecords();
+  playSound(clickSound);
+}
+
 
