@@ -26,13 +26,10 @@ function setPosition () {
   doc.style.top = (menuCoords.top-W/6)+'px';
   wrapper.style.backgroundImage = "url('img/back3.jpg')";
 }
-//setPosition();
-
-
-
 
 function anim1() {
   var div=document.getElementById('rules');
+  div.style.transform = "translateZ(0)";
   div.style.visibility="hidden";
   div.style.height="0px";
   playSound(clickSound);
@@ -40,6 +37,7 @@ function anim1() {
 
 function anim2() {
   var div=document.getElementById('rules');
+  div.style.transform = "translateZ(0)";
   div.style.height='auto';
   var targetHeight=div.offsetHeight;
   div.style.height='0px';
@@ -50,6 +48,7 @@ function anim2() {
 
 function anim3() {
   var div=document.getElementById('playerName');
+  div.style.transform = "translateZ(0)";
   div.style.height='auto';
   var targetHeight=div.offsetHeight;
   div.style.height='0px';
@@ -66,13 +65,14 @@ function anim3() {
 
 function anim4() {
   var div=document.getElementById('playerName');
+  div.style.transform = "translateZ(0)";
   div.style.visibility="hidden";
   div.style.height="0px";
 }
 
 function anim5() {
   var divRecords=document.getElementById('records');
-  console.log(divRecords);
+  divRecords.style.transform = "translateZ(0)";
   divRecords.style.height='auto';
   var targetHeight=divRecords.offsetHeight;
   divRecords.style.height='0px';
@@ -84,6 +84,7 @@ function anim5() {
 
 function anim6() {
   var divRecords=document.getElementById('records');
+  divRecords.style.transform = "translateZ(0)";
   divRecords.style.visibility="hidden";
   divRecords.style.height="0px";
   playSound(clickSound);

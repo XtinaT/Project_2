@@ -33,8 +33,9 @@ let prev;
 
 var body = document.getElementsByTagName("body");
 var wrapper = document.getElementById('wrapper');
-var W = window.innerWidth;
-var H = window.innerHeight;
+var W = sizes.width;
+var H = sizes.height;
+
 var isGameOver = true;
 ///////////all media
 
@@ -132,8 +133,8 @@ window.addEventListener("resize", resize, false);
 function resize(e) {
   e = e || window.event;
   e.preventDefault;
-  H = window.innerHeight;
-  W = window.innerWidth;
+  W = sizes.width;
+  H = sizes.height;
   if (SPAState.pagename=='Main') {
     setPosition();
   document.getElementById('wrapper').style.width = '100%';
@@ -204,7 +205,7 @@ function resize(e) {
        if (!isGameOver) {
               gameOver();
         }
-        pageHTML+=`<p class="logo">BEAT IT!</p>
+        pageHTML=`<p class="logo">BEAT IT!</p>
     <div class="menu">
       <input type="button" class="menuElem" value="New Game" onmouseover="playSound(hoverSound)" onclick="wantToPlay()"/>
       <input type="button" class="menuElem" value="Rules" onclick="anim2()" onmouseover="playSound(hoverSound)"/>
@@ -239,12 +240,12 @@ function resize(e) {
     </div>`;
         
         
-        preloaderHTML+=`<svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        preloaderHTML=`<svg class="preloader__image" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <path fill="currentColor" d="M304 48c0 26.51-21.49 48-48 48s-48-21.49-48-48 21.49-48 48-48 48 21.49 48 48zm-48 368c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zm208-208c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48zM96 256c0-26.51-21.49-48-48-48S0 229.49 0 256s21.49 48 48 48 48-21.49 48-48zm12.922 99.078c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.491-48-48-48zm294.156 0c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48c0-26.509-21.49-48-48-48zM108.922 60.922c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.491-48-48-48z"></path></svg>`;
 
         break;
       case 'Game':
-        pageHTML+=`<source src='sounds/main.mp3' type='audio/mpeg' id='mainMusic'></audio>
+        pageHTML=`<source src='sounds/main.mp3' type='audio/mpeg' id='mainMusic'></audio>
           <div id='header'><svg id='pause' xmlns='http://www.w3.org/2000/svg'></svg>
           <div id='score'></div><div id='life'></div><img id='react1'> <img id='react2'></div>
           <div id='overlay'><div id='game-over'><h1>GAME OVER</h1><button id='play-again'>Play Again</button></div></div>

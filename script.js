@@ -1,8 +1,28 @@
 "use strict";
 var body = document.getElementsByTagName("body");
 var wrapper = document.getElementById("wrapper");
-var W = window.innerWidth;
-var H = window.innerHeight;
+function getWindowClientSize() {
+  var uaB=navigator.userAgent.toLowerCase();
+  var isOperaB = (uaB.indexOf('opera')  > -1);
+  var isIEB=(!isOperaB && uaB.indexOf('msie') > -1);
+
+  var clientWidth=((document.compatMode||isIEB)&&!isOperaB)?
+    (document.compatMode=='CSS1Compat')?
+    document.documentElement.clientWidth:
+    document.body.clientWidth:
+    (document.parentWindow||document.defaultView).innerWidth;
+
+  var clientHeight=((document.compatMode||isIEB)&&!isOperaB)?
+    (document.compatMode=='CSS1Compat')?
+    document.documentElement.clientHeight:
+    document.body.clientHeight:
+    (document.parentWindow||document.defaultView).innerHeight;
+
+  return {width:clientWidth, height:clientHeight};
+}
+var sizes = getWindowClientSize();
+var W = sizes.width;
+var H = sizes.height;
 var isGameOver;
 var RAF =
   window.requestAnimationFrame ||
@@ -24,7 +44,6 @@ var canvas = document.createElement("canvas");
 canvas.id = "canvas";
 var ctx = canvas.getContext("2d");
 
-//var score = 0;
 var scoreEl;
 var lifes;
 var lifesChildren;
@@ -41,7 +60,6 @@ function drawGame() {
   scoreEl = document.getElementById("score");
   lifes = document.getElementById("life");
   img2 = document.getElementById("react2");
-  //var i;
   var svg = document.getElementById("pause");
   svg.setAttribute("width", W / 15);
   svg.setAttribute("height", W / 15);
@@ -223,7 +241,7 @@ var explosions = [];
 var coords;
 
 var gameTime = 0;
-
+var play;
 /////////////////////////  INIT  ////////////////////////////////////
 function init() {
   RAF =
@@ -239,7 +257,7 @@ function init() {
   if (!document.getElementById("player")) {
     player.create();
     player.update();
-    var play = document.getElementById("player");
+    play = document.getElementById("player");
     play.addEventListener("touchstart", playerTouchStart, { passive: false });
     play.addEventListener("touchmove", movePlayerTouch, { passive: false });
     play.addEventListener("touchend", playerTouchEnd, { passive: false });
@@ -321,7 +339,6 @@ function gameOver() {
 
 /////////////////////////  RESET ////////////////////////////////////
 function reset() {
-  //drawGame();
   document.getElementById("overlay").style.display = "none";
   gameTime = 0;
   player.score = 0;
@@ -430,14 +447,13 @@ function movePlayerMouse(e) {
   player.posY = Math.round(e.pageY - player.size / 2);
 }
 
-let currentPosX;
-let currentPosY;
 function playerTouchStart(e) {
   var self = this;
   e = e || window.event;
   e.preventDefault();
   window.removeEventListener("click", mouseFire, false);
   window.removeEventListener("mousemove", movePlayerMouse, false);
+ 
   self.style.cursor = "none";
   var touchInfo = e.targetTouches[0];
   touchShiftX = touchInfo.pageX - player.posX;
@@ -458,30 +474,21 @@ function movePlayerTouch(e) {
   var touchInfo = e.targetTouches[0];
   player.posX = touchInfo.pageX - touchShiftX;
   player.posY = touchInfo.pageY - touchShiftY;
-  currentPosX = player.posX;
-  currentPosY = player.posY;
 }
 
 function touchFire(e) {
   e = e || window.event;
   e.preventDefault();
-  player.posX = currentPosX;
-  player.posY = currentPosY;
-  player.update();
-  newFire.addFire(currentPosX + player.size, currentPosY - player.size / 2);
+  newFire.addFire(player.posX + player.size, player.posY);
   playSound(shootSound);
 }
-
 
 
 $(".wrapper").bind("doubleTap", function () {
   newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
 });
 
-$('.wrapper').doubleTap(function(){
-  newFire.addFire(player.posX + player.size, player.posY + player.size / 2);
-  playSound(shootSound);
-})
+
 
 /////////////////////////  CONTROLLERS END ////////////////////////////////////
 
