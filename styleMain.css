@@ -4,7 +4,7 @@ body{
 
 @font-face {
   font-family:"Disko";
-  src:url("font/Disko.eot?") format("eot"),url("font/Disko.woff") format("woff"),url("font/Disko.ttf") format("truetype"),url("font/Disko.svg#Disko") format("svg");
+  src:url("font/Disko.eot") format("eot"),url("font/Disko.woff") format("woff"),url("font/Disko.ttf") format("truetype"),url("font/Disko.svg") format("svg");
   font-weight:normal;
   font-style:normal;
 }
@@ -35,14 +35,18 @@ body{
   overflow: hidden;
 }
 
-#rules{
+.hiddenElements#rules{
   padding:10px 10px 10px 10px;
+  font-size:3vh;
 }
+
+
 #records>div{
   min-height: 4vh;
   text-align:left;
   padding-left: 10%;
   font-size:4vh;
+  line-height: 150%;
 }
 
 #playerName input {

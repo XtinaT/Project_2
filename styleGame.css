@@ -6,7 +6,7 @@ body{
 }
 @font-face {
   font-family:"Disko";
-  src:url("font/Disko.eot?") format("eot"),url("font/Disko.woff") format("woff"),url("font/Disko.ttf") format("truetype"),url("font/Disko.svg#Disko") format("svg");
+  src:url("font/Disko.eot") format("eot"),url("font/Disko.woff") format("woff"),url("font/Disko.ttf") format("truetype"),url("font/Disko.svg") format("svg");
   font-weight:normal;
   font-style:normal;
 }
@@ -77,7 +77,6 @@ svg:hover {
 }
 
 #game-over {
-  font-size:2em;
   text-align: center;
   font-family: 'Disko';
   color:#7252E4;
@@ -113,19 +112,5 @@ svg:hover {
   cursor:none;
 }
 
-#fireButton {
-  position:absolute;
-  visibility:hidden;
-  background-color: white;
-  border: solid 3px #CFE0F1;
-  border-radius:50%;
-  color:#B4B4E8;
-  font-size:2em;
-  font-family: 'Disko';
-}
 
-@media all and (max-width:50em){
-  #fireButton {
-    font-size:1.5em;
-  }
-}
+

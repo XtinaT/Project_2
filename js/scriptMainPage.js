@@ -1,21 +1,33 @@
 'use strict'
 
-
-function setPosition () {
+// Расстановка изображений на главной странице
+function setPositions () {
   let menu = document.getElementsByClassName('menu')[0];
   let menuCoords = menu.getBoundingClientRect();
 
   let virus1 = document.getElementById('virus1');
-  virus1.style.left = (menuCoords.left-W/70)+'px';
-  virus1.style.top = (menuCoords.bottom-W/15)+'px';
+  if (window.innerWidth<800) {
+    console.log(window.innerWidth);
+    virus1.style.left = (menuCoords.left)+'px';
+    virus1.style.top = (menuCoords.bottom-W/10)+'px';
+  } else {
+      virus1.style.left = (menuCoords.left-W/70)+'px';
+      virus1.style.top = (menuCoords.bottom-W/15)+'px';
+  }
 
   let virus2 = document.getElementById('virus2');
   virus2.style.left = (menuCoords.left+W/20)+'px';
   virus2.style.top = (menuCoords.bottom-W/10)+'px';
 
   let cell1 = document.getElementById('cell1');
-  cell1.style.left = (menuCoords.left-W/70)+'px';
-  cell1.style.top = (menuCoords.top-W/20)+'px';
+  if (window.innerWidth<800) {
+    cell1.style.left = (menuCoords.left)+'px';
+    cell1.style.top = (menuCoords.top)+'px';
+  } else {
+    cell1.style.left = (menuCoords.left-W/70)+'px';
+    cell1.style.top = (menuCoords.top-W/20)+'px';
+  }
+  
 
   let cell2 = document.getElementById('cell2');
   cell2.style.left = (menuCoords.right-W/9)+'px';
@@ -23,10 +35,11 @@ function setPosition () {
 
   let doc = document.getElementById('doc');
   doc.style.left = (menuCoords.right-W/5)+'px';
-  doc.style.top = (menuCoords.top-W/6)+'px';
+  doc.style.top = (menuCoords.top - W/6)+'px';
   wrapper.style.backgroundImage = "url('img/back3.jpg')";
 }
 
+// Анимации появления/скрытия элементов меню
 function anim1() {
   var div=document.getElementById('rules');
   div.style.transform = "translateZ(0)";
@@ -90,6 +103,8 @@ function anim6() {
   playSound(clickSound);
 }
 
+
+// Убирает предложение повернуть экран
 function cancelRotation() {
   var cover = document.getElementsByClassName('cover');
   cover[0].style.display = 'none';
